@@ -30,6 +30,7 @@ namespace Sodium
     {
         internal readonly Node<T> Node;
         private readonly List<IListener> disposables;
+        private readonly DisposableBag externals = new DisposableBag();
         private readonly List<T> firings;
         internal readonly IKeepListenersAlive KeepListenersAlive;
 
@@ -51,11 +52,20 @@ namespace Sodium
             this.firings = firings;
         }
 
-        public void Dispose()
+        public void OnDispose(IDisposable disposable)
+        {
+            externals.Add(disposable);
+        }
+
+        public virtual void Dispose()
         {
             foreach (IListener d in this.disposables)
             {
                 d.Dispose();
+            }
+            using (externals)
+            {
+                
             }
         }
 

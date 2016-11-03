@@ -40,6 +40,7 @@ namespace Sodium
         private readonly Stream<T> stream;
         private readonly MutableMaybeValue<T> valueUpdate = new MutableMaybeValue<T>();
         private readonly IListener cleanup;
+        private readonly DisposableBag externals = new DisposableBag();
 
         private T valueProperty;
 
@@ -91,11 +92,22 @@ namespace Sodium
 
         protected bool UsingInitialValue { get; private set; }
 
+
+
         public virtual void Dispose()
         {
             using (this.cleanup)
             {
             }
+            using (this.externals)
+            {
+                
+            }
+        }
+
+        public void OnDispose(IDisposable disposable)
+        {
+            externals.Add(disposable);
         }
 
         /// <summary>
